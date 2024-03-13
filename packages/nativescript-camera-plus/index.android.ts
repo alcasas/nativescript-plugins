@@ -640,7 +640,8 @@ export class CameraPlus extends CameraPlusBase {
 
 				// Ensure storage permissions
 				if (!this.hasStoragePermissions()) {
-					permissions.request('storage').then(() => {
+					//permissions.request('storage').then(() => {
+					permissions.request('photo').then(() => {
 						if (!this.hasStoragePermissions()) {
 							const error = new Error('request for storage permissions denied');
 							this.sendEvent(CameraPlus.errorEvent, error, 'Error choosing an image from the device library.');
@@ -764,11 +765,12 @@ export class CameraPlus extends CameraPlusBase {
 	 */
 	public requestStoragePermissions(explanation: string = ''): Promise<boolean> {
 		return new Promise((resolve, reject) => {
-			const perms = {
-				storage: { write: true, read: true },
-			};
+			/*const perms = {
+				photo: { write: true, read: true },
+			};*/
 			permissions
-				.request(perms)
+				//.request(perms)
+				.request('photo')
 				.then(() => {
 					resolve(true);
 				})
@@ -783,8 +785,10 @@ export class CameraPlus extends CameraPlusBase {
 	 * Returns true if the WRITE_EXTERNAL_STORAGE && READ_EXTERNAL_STORAGE permissions have been granted.
 	 */
 	public async hasStoragePermissions(): Promise<boolean> {
-		const perms = await permissions.check('storage', { write: true, read: true });
-		if (perms[0]) {
+		//const perms = await permissions.check('storage', { write: true, read: true });
+		const perms = await permissions.check('photo');
+		//if (perms[0]) {
+		if (perms[1]) {
 			return true;
 		} else {
 			return false;
@@ -798,7 +802,7 @@ export class CameraPlus extends CameraPlusBase {
 				resolve(false);
 			};
 			const perms = {
-				storage: { write: true, read: true },
+				photo: {},
 				audio: {},
 				video: {},
 			};
@@ -816,7 +820,7 @@ export class CameraPlus extends CameraPlusBase {
 	public hasVideoRecordingPermissions(): Promise<boolean> {
 		return new Promise(async (resolve, reject) => {
 			const perms = {
-				storage: { write: true, read: true },
+				video: {},
 				audio: {},
 			};
 			const permResults = await permissions.request(perms);
